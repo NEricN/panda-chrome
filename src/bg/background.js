@@ -114,11 +114,12 @@ chrome.gcm.unregister(function() {
         gcmId = regId;
 
         chrome.gcm.onMessage.addListener(function(data) {
+            console.log(data);
             if(state === "listen") {
-                if(data['song']) {
+                if(data.data['song']) {
                     // play this song bro
                     audioManager.playSong(data['song']);
-                } else if(data['end']) {
+                } else if(data.data['end']) {
                     //STOP EVERYTHING
                     audioManager.playSong("");
                 }
