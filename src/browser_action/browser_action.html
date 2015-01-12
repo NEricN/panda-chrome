@@ -5,6 +5,7 @@
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 <script src="/js/jquery/jquery.min.js"></script>
 <script src="/js/jquery/jquery-ui.min.js"></script>
+<script src="/js/jquery/jquery-marquee.js"></script>
 <script src="/js/main.js"></script>
 </head>
 
@@ -31,7 +32,9 @@
 
     <div class="text-center">
         <div class="dead" id="notifications">
-            <h4>No Station</h4>
+            <marquee behavior="scroll" scrollamount="1" scrolldelay="-1" direction="left" width="200">
+                <h4 id="marquee">No Station</h4>
+            </marquee>
         </div>
     </div>
 </body>

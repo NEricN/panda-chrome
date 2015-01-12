@@ -7,6 +7,8 @@ $(document).ready(function() {
 
     var $volume = $("#volume");
 
+    $('marquee').marquee();
+
     var changeNotification = function(state, message, station) {
         var defaultMessage = "";
         if(state === "listen") {
@@ -20,7 +22,7 @@ $(document).ready(function() {
             defaultMessage = "No Station"; 
         }
 
-        $notification.html("<h4>"+(message||defaultMessage)+"</h4>");
+        $("#marquee").html((message||defaultMessage));
     }
 
     $tunebutton.click(function() {
