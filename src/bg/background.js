@@ -118,7 +118,7 @@ chrome.gcm.unregister(function() {
             if(state === "listen") {
                 if(data.data['song']) {
                     // play this song bro
-                    audioManager.playSong(data['song']);
+                    audioManager.playSong(data.data['song']);
                 } else if(data.data['end']) {
                     //STOP EVERYTHING
                     audioManager.playSong("");
