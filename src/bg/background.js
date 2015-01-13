@@ -143,3 +143,17 @@ chrome.webRequest.onHeadersReceived.addListener(function(data) {
         });
     }
 }, {urls: ["http://*.pandora.com/*"]}, ["responseHeaders"]);
+
+chrome.storage.local.get(['volume','state','tune','broadcast'], function(data) {
+    audioManager.changeVolume(data.volum||1*100);
+
+    if(data.state === "broadcast") {
+        curStation = data.broadcast;
+    } else if(data.state === "listen") {
+        curStation = data.tune;
+    } else {
+        curStation = "";
+    }
+
+    state = data.state;
+})
