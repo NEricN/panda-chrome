@@ -74,9 +74,7 @@ var broadcast = function(station, cb) {
             curStation = station;
             state = "broadcast";
 
-            chrome.storage.local.set({state: state, broadcast: curStation});
-
-            cb(false);
+            chrome.storage.local.set({state: state, broadcast: curStation}, function() { cb(false); });
         }).fail(function(blarg) {
             cb("Station Already Exists");
         });;
@@ -94,9 +92,7 @@ var tuneInto = function(station, cb) {
             curStation = station;
             state = "listen";
 
-            chrome.storage.local.set({state: state, tune: curStation});
-
-            cb(false);
+            chrome.storage.local.set({state: state, tune: curStation}, function() { cb(false); });
         }).fail(function(blarg) {
             cb("Station Not Found");
         });
@@ -129,7 +125,12 @@ chrome.storage.local.get('registrationId', function(data) {
                     if(state === "listen") {
                         if(data.data['song']) {
                             // play this song bro
-                            audioManager.playSong(data.data['song']);
+                            if(audioManager.container.url === data.data['song']) {
+                                //dupe, ignore but log message
+                                console.log("Dupe glitch occured with " + data.data['song']);
+                            } else {
+                                audioManager.playSong(data.data['song']);
+                            }
                         } else if(data.data['end']) {
                             //STOP EVERYTHING
                             audioManager.playSong("");
