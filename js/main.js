@@ -53,6 +53,8 @@ $(document).ready(function() {
             chrome.runtime.sendMessage({method: state === "listen" ? "off" : 'tune', target: 'background', station: $tunefield.val()}, function(err) {
                 $tunebutton.attr("disabled", false);
                 if(err) {
+                    $tunebutton.attr("disabled", false);
+                    $tunebutton.html("Tune in");
                     changeNotification("dead", err);
                 } else {
                     if(state === "listen") {
@@ -82,6 +84,8 @@ $(document).ready(function() {
             chrome.runtime.sendMessage({method: state === "broadcast" ? "off" : 'broadcast', target: 'background', station: $broadcastfield.val()}, function(err) {
                 $broadcastbutton.attr("disabled", false);
                 if(err) {
+                    $broadcastbutton.attr("disabled", false);
+                    $broadcastbutton.html("Broadcast");
                     changeNotification("dead", err);
                 } else {
                     if(state === "broadcast") {
