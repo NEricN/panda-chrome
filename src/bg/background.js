@@ -135,6 +135,8 @@ chrome.storage.local.get('registrationId', function(data) {
                             //STOP EVERYTHING
                             audioManager.playSong("");
                             cleanUp();
+
+                            chrome.runtime.sendMessage({target: "popup", method: "unlisten"});
                         }
                     }
                 });
