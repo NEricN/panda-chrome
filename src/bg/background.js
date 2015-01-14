@@ -15,8 +15,8 @@ AudioManager.prototype.generateAudio = function(src) {
 
 AudioManager.prototype.playSong = function(src) {
     if(this.container) {
-        $(this.container).attr('src', src);
         this.container.pause();
+        $(this.container).attr('src', src);
         this.container.load();
     } else {
         this.container = this.generateAudio(src);
@@ -35,6 +35,29 @@ var audioManager = new AudioManager();
 var curStation;
 var state;
 var gcmId;
+
+var addGcmListener = function() {
+    chrome.gcm.onMessage.addListener(function(data) {
+        //console.log(data);
+        if(state === "listen") {
+            if(data.data['song']) {
+                // play this song bro
+                if(audioManager.container.url === data.data['song']) {
+                    //dupe, ignore but log message
+                    console.log("Dupe glitch occured with " + data.data['song']);
+                } else {
+                    audioManager.playSong(data.data['song']);
+                }
+            } else if(data.data['end']) {
+                //STOP EVERYTHING
+                audioManager.playSong("");
+                cleanUp();
+
+                chrome.runtime.sendMessage({target: "popup", method: "unlisten"});
+            }
+        }
+    });
+}
 
 var changeVolume = function(vol) {
     chrome.storage.local.set({volume: vol}, function(err) {
@@ -120,30 +143,12 @@ chrome.storage.local.get('registrationId', function(data) {
 
                 gcmId = regId;
 
-                chrome.gcm.onMessage.addListener(function(data) {
-                    //console.log(data);
-                    if(state === "listen") {
-                        if(data.data['song']) {
-                            // play this song bro
-                            if(audioManager.container.url === data.data['song']) {
-                                //dupe, ignore but log message
-                                console.log("Dupe glitch occured with " + data.data['song']);
-                            } else {
-                                audioManager.playSong(data.data['song']);
-                            }
-                        } else if(data.data['end']) {
-                            //STOP EVERYTHING
-                            audioManager.playSong("");
-                            cleanUp();
-
-                            chrome.runtime.sendMessage({target: "popup", method: "unlisten"});
-                        }
-                    }
-                });
+                addGcmListener();
             });
         });
     } else {
         gcmId = data.registrationId;
+        addGcmListener();
     }
 })
 
