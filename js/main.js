@@ -46,8 +46,12 @@ $(document).ready(function() {
     }
 
     $tunebutton.click(function() {
+        $tunebutton.attr("disabled", true);
+        $tunebutton.html(state === "listen" ? "Tuning out..." : "Tuning in...");
+
         if($tunefield.val()) {
-            chrome.runtime.sendMessage({method: 'tune', target: 'background', station: $tunefield.val()}, function(err) {
+            chrome.runtime.sendMessage({method: state === "listen" ? "off" : 'tune', target: 'background', station: $tunefield.val()}, function(err) {
+                $tunebutton.attr("disabled", false);
                 if(err) {
                     changeNotification("dead", err);
                 } else {
@@ -71,8 +75,12 @@ $(document).ready(function() {
     });
 
     $broadcastbutton.click(function() {
+        $broadcastbutton.attr("disabled", true);
+        $broadcastbutton.html(state === "broadcast" ? "Turning off broadcast..." : "Trying to broadcast...");
+
         if($broadcastfield.val()) {
-            chrome.runtime.sendMessage({method: 'broadcast', target: 'background', station: $broadcastfield.val()}, function(err) {
+            chrome.runtime.sendMessage({method: state === "broadcast" ? "off" : 'broadcast', target: 'background', station: $broadcastfield.val()}, function(err) {
+                $broadcastbutton.attr("disabled", false);
                 if(err) {
                     changeNotification("dead", err);
                 } else {
@@ -88,7 +96,7 @@ $(document).ready(function() {
                             enableButton($tunefield, $tunebutton, "button_tune", "Tune in");
                         }
 
-                        state = "listen";
+                        state = "broadcast";
                     }
                 }
             });

@@ -45,53 +45,61 @@ var changeVolume = function(vol) {
     //do something with volume
 }
 
-var cleanUp = function() {
+var cleanUp = function(cb) {
     if(state === "broadcast") {
         $.post(baseURL+"/unbroadcast", JSON.stringify({station: curStation}), function(data) {
             console.log(data);
+            //state = "none";
         });
     } else if(state === "listen") {
         $.post(baseURL+"/unlisten", JSON.stringify({station: curStation, gcm: gcmId}), function(data) {
             console.log(data);
+            //state = "none";
         });
     }
+
+    state = "none";
+    curStation = "none";
+
+    chrome.storage.local.set({state: state}, cb);
 }
 
 var broadcast = function(station, cb) {
     audioManager.playSong(""); // cancel all the things
-    cleanUp();
+    cleanUp(function() {
+        $.post(baseURL+"/broadcast", JSON.stringify({station: station, songurl: "placeholder", newBroadcast: true}), function(data) {
+            console.log(data);
+            //set curStation here
+            //set state here
+            curStation = station;
+            state = "broadcast";
 
-    $.post(baseURL+"/broadcast", JSON.stringify({station: station, songurl: "placeholder", newBroadcast: true}), function(data) {
-        console.log(data);
-        //set curStation here
-        //set state here
-        curStation = station;
-        state = "broadcast";
+            chrome.storage.local.set({state: state, broadcast: curStation});
 
-        chrome.storage.local.set({state: state, broadcast: curStation});
-
-        cb(false);
-    }).fail(function(blarg) {
-        cb("Station Already Exists");
-    });;
+            cb(false);
+        }).fail(function(blarg) {
+            cb("Station Already Exists");
+        });;
+    });    
 }
 
 var tuneInto = function(station, cb) {
     audioManager.playSong(""); // cancel all the things
-    cleanUp();
+    cleanUp(function() {
+        $.post(baseURL+"/listen", JSON.stringify({station: station, gcm: gcmId}), function(data) {
+            console.log(data);
+            audioManager.playSong((JSON.parse(data))["url"]);
+            //set curStation here
+            //set state here
+            curStation = station;
+            state = "listen";
 
-    $.post(baseURL+"/listen", JSON.stringify({station: station, gcm: gcmId}), function(data) {
-        console.log(data);
-        //set curStation here
-        //set state here
-        curStation = station;
-        state = "listen";
+            chrome.storage.local.set({state: state, tune: curStation});
 
-        chrome.storage.local.set({state: state, tune: curStation});
-
-        cb(false);
-    }).fail(function(blarg) {
-        cb("Station Not Found");
+            cb(false);
+        }).fail(function(blarg) {
+            cb("Station Not Found");
+        });
     });
 }
 
@@ -102,7 +110,7 @@ chrome.runtime.onMessage.addListener(function(req, sender, sendResponse) {
             case "volume" : changeVolume(req.volume); sendResponse(""); break;
             case "broadcast" : broadcast(req.station, sendResponse); break;
             case "tune": tuneInto(req.station, sendResponse); break;
-            case "off": cleanUp(); sendResponse(""); break;
+            case "off": cleanUp(function() { sendResponse(""); }); break;
         }
     }
     return true;
@@ -123,6 +131,7 @@ chrome.gcm.unregister(function() {
                 } else if(data.data['end']) {
                     //STOP EVERYTHING
                     audioManager.playSong("");
+                    cleanUp();
                 }
             }
         });
