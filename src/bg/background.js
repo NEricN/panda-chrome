@@ -102,6 +102,7 @@ chrome.runtime.onMessage.addListener(function(req, sender, sendResponse) {
             case "volume" : changeVolume(req.volume); sendResponse(""); break;
             case "broadcast" : broadcast(req.station, sendResponse); break;
             case "tune": tuneInto(req.station, sendResponse); break;
+            case "off": cleanUp(); sendResponse(""); break;
         }
     }
     return true;
@@ -114,7 +115,7 @@ chrome.gcm.unregister(function() {
         gcmId = regId;
 
         chrome.gcm.onMessage.addListener(function(data) {
-            console.log(data);
+            //console.log(data);
             if(state === "listen") {
                 if(data.data['song']) {
                     // play this song bro
