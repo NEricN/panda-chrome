@@ -184,6 +184,12 @@ chrome.webRequest.onHeadersReceived.addListener(function(data) {
                     console.log(data);
                     //set curStation here
                     //set state here
+                    grabMetaData(function(metadata) {
+                        $.post(baseURL+"/broadcast", JSON.stringify({station: curStation, artist: metadata.artist, song: metadata.song, album: metadata.album}, function(data) {
+                            console.log("Meta data sent!");
+                            console.log(metadata);
+                        });
+                    })
                 });
             }
         });
