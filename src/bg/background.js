@@ -36,6 +36,21 @@ var curStation;
 var state;
 var gcmId;
 
+var grabMetaData = function(cb) {
+    chrome.tabs.query({url: "http://www.pandora.com/*"}, function(data) {
+        console.log(data);
+        var tab = data[0];
+
+        if(tab) {
+            chrome.tabs.sendMessage(tab.id, {target: "content", method: "metadata"}, function(data) {
+                cb(data);
+            });
+        } else {
+            cb(null);
+        }
+    });
+}
+
 var addGcmListener = function() {
     chrome.gcm.onMessage.addListener(function(data) {
         //console.log(data);
@@ -54,6 +69,11 @@ var addGcmListener = function() {
                 cleanUp();
 
                 chrome.runtime.sendMessage({target: "popup", method: "unlisten"});
+            } else if(data.data['meta']) {
+                // grab meta data
+
+                chrome.storage.local.set({album: data.data['album'], song: data.data['song'], artist: data.data['artist']});
+                chrome.runtime.sendMessage({target: "popup", method: "metadata", album: data.data['album'], song: data.data['song'], artist: data.data['artist']});
             }
         }
     });
