@@ -116,27 +116,34 @@ chrome.runtime.onMessage.addListener(function(req, sender, sendResponse) {
     return true;
 });
 
-chrome.gcm.unregister(function() {
-    chrome.gcm.register(['576374287167'], function(regId) {
-        chrome.storage.local.set({registrationId: regId});
+chrome.storage.local.get('registrationId', function(data) {
+    if(!data.registrationId) {
+        chrome.gcm.unregister(function() {
+            chrome.gcm.register(['576374287167'], function(regId) {
+                chrome.storage.local.set({registrationId: regId});
 
-        gcmId = regId;
+                gcmId = regId;
 
-        chrome.gcm.onMessage.addListener(function(data) {
-            //console.log(data);
-            if(state === "listen") {
-                if(data.data['song']) {
-                    // play this song bro
-                    audioManager.playSong(data.data['song']);
-                } else if(data.data['end']) {
-                    //STOP EVERYTHING
-                    audioManager.playSong("");
-                    cleanUp();
-                }
-            }
+                chrome.gcm.onMessage.addListener(function(data) {
+                    //console.log(data);
+                    if(state === "listen") {
+                        if(data.data['song']) {
+                            // play this song bro
+                            audioManager.playSong(data.data['song']);
+                        } else if(data.data['end']) {
+                            //STOP EVERYTHING
+                            audioManager.playSong("");
+                            cleanUp();
+                        }
+                    }
+                });
+            });
         });
-    });
-});
+    } else {
+        gcmId = data.registrationId;
+    }
+})
+
 
 chrome.webRequest.onHeadersReceived.addListener(function(data) {
     if(data.responseHeaders && state === "broadcast") {
