@@ -26,5 +26,11 @@
     "storage",
     "webRequest",
     "*://*.pandora.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches":["http://www.pandora.com/*"],
+      "js": ["/js/jquery/jquery.min.js", "/js/content.js"]
+    }
   ]
 }
