@@ -36,6 +36,23 @@ var curStation;
 var state;
 var gcmId;
 
+var executeScripts = function(tabId, injectDetailsArray)
+{
+    function createCallback(tabId, injectDetails, innerCallback) {
+        return function () {
+            chrome.tabs.executeScript(tabId, injectDetails, innerCallback);
+        };
+    }
+
+    var callback = null;
+
+    for (var i = injectDetailsArray.length - 1; i >= 0; --i)
+        callback = createCallback(tabId, injectDetailsArray[i], callback);
+
+    if (callback !== null)
+        callback();   // execute outermost function
+}
+
 var grabMetaData = function(cb) {
     chrome.tabs.query({url: "http://www.pandora.com/*"}, function(data) {
         console.log(data);
@@ -212,3 +229,16 @@ chrome.storage.local.get(['volume','state','tune','broadcast'], function(data) {
 
     state = data.state;
 })
+
+chrome.tabs.query({url: "http://www.pandora.com/*"}, function(data) {
+    var tab = data[0];
+
+    if(tab) {
+        executeScripts(tab.id, [
+            { file: "/js/jquery/jquery.min.js"},
+            { file: "/js/content.js"}
+        ]);
+    } else {
+        cb(null);
+    }
+});
