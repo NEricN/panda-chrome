@@ -29,10 +29,10 @@ $(document).ready(function() {
         $button.html(text);
     }
 
-    var updateMetaData = function(song, album, title) {
-        song = song;
-        album = album;
-        title = title;
+    var updateMetaData = function(n_song, n_album, n_title) {
+        song = n_song;
+        album = n_album;
+        title = n_title;
 
         changeNotification("listen");
     }
