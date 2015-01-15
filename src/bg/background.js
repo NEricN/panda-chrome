@@ -152,7 +152,15 @@ var tuneInto = function(station, cb) {
             curStation = station;
             state = "listen";
 
-            chrome.storage.local.set({state: state, tune: curStation}, function() { cb(false); });
+            var song, album, artist;
+
+            if(data.songData) {
+                song = data.songData.songTitle;
+                album = data.songData.albumTitle;
+                artist = data.songData.artist;
+            }
+
+            chrome.storage.local.set({state: state, tune: curStation, artist: artist, song: song, album: album}, function() { cb(false); });
         }).fail(function(blarg) {
             cb("Station Not Found");
         });
