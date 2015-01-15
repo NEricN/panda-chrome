@@ -187,7 +187,7 @@ chrome.webRequest.onHeadersReceived.addListener(function(data) {
                     //much hack, wait 2 seconds
                     setTimeout(function() {
                         grabMetaData(function(metadata) {
-                            $.post(baseURL+"/broadcast/meta", JSON.stringify({station: curStation, artist: metadata.artist, song: metadata.song, album: metadata.album}), function(data) {
+                            $.post(baseURL+"/broadcast/meta", JSON.stringify({station: curStation, artist: metadata.artist, song: metadata.title, album: metadata.album}), function(data) {
                                 console.log("Meta data sent!");
                                 console.log(metadata);
                             });
