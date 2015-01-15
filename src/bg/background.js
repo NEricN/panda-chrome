@@ -192,7 +192,7 @@ chrome.webRequest.onHeadersReceived.addListener(function(data) {
                                 console.log(metadata);
                             });
                         });
-                    }, 2000);
+                    }, 5000);
                 });
             }
         });
