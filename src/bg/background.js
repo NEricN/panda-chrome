@@ -55,7 +55,12 @@ var addGcmListener = function() {
     chrome.gcm.onMessage.addListener(function(data) {
         //console.log(data);
         if(state === "listen") {
-            if(data.data['song']) {
+            if(data.data['meta']) {
+                // grab meta data
+
+                chrome.storage.local.set({album: data.data['album'], song: data.data['song'], artist: data.data['artist']});
+                chrome.runtime.sendMessage({target: "popup", method: "metadata", album: data.data['album'], song: data.data['song'], artist: data.data['artist']});
+            } else if(data.data['song']) {
                 // play this song bro
                 if(audioManager.container.url === data.data['song']) {
                     //dupe, ignore but log message
@@ -69,11 +74,6 @@ var addGcmListener = function() {
                 cleanUp();
 
                 chrome.runtime.sendMessage({target: "popup", method: "unlisten"});
-            } else if(data.data['meta']) {
-                // grab meta data
-
-                chrome.storage.local.set({album: data.data['album'], song: data.data['song'], artist: data.data['artist']});
-                chrome.runtime.sendMessage({target: "popup", method: "metadata", album: data.data['album'], song: data.data['song'], artist: data.data['artist']});
             }
         }
     });

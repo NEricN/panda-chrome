@@ -118,8 +118,8 @@ $(document).ready(function() {
     });
 
     chrome.storage.local.get(['volume','state','tune','broadcast','artist','song','album'], function(data) {
+        console.log(data);
         $volume.val((data.volume||1)*100);
-        changeNotification(data.state, "", data.state === "broadcast" ? data.broadcast : data.tune);
         $broadcastfield.val(data.broadcast);
         $tunefield.val(data.tune);
 
@@ -128,6 +128,8 @@ $(document).ready(function() {
         song = data.song;
         artist = data.artist;
         album = data.album;
+
+        changeNotification(data.state, "", data.state === "broadcast" ? data.broadcast : data.tune);
 
         if(data.state === "broadcast") {
             // grey out broadcast button
