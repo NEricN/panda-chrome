@@ -104,7 +104,7 @@ var cleanUp = function(cb) {
     state = "none";
     curStation = "none";
 
-    chrome.storage.local.set({state: state}, cb);
+    chrome.storage.local.set({album: "", song: "", artist: "", state: state}, cb);
 }
 
 var broadcast = function(station, cb) {
@@ -149,7 +149,7 @@ chrome.runtime.onMessage.addListener(function(req, sender, sendResponse) {
             case "volume" : changeVolume(req.volume); sendResponse(""); break;
             case "broadcast" : broadcast(req.station, sendResponse); break;
             case "tune": tuneInto(req.station, sendResponse); break;
-            case "off": cleanUp(function() { sendResponse(""); }); break;
+            case "off": cleanUp(function() { audioManager.playSong(""); sendResponse(""); }); break;
         }
     }
     return true;
