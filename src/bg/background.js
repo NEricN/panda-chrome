@@ -238,7 +238,5 @@ chrome.tabs.query({url: "http://www.pandora.com/*"}, function(data) {
             { file: "/js/jquery/jquery.min.js"},
             { file: "/js/content.js"}
         ]);
-    } else {
-        cb(null);
     }
 });
