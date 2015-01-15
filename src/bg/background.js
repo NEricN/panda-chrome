@@ -184,12 +184,15 @@ chrome.webRequest.onHeadersReceived.addListener(function(data) {
                     console.log(data);
                     //set curStation here
                     //set state here
-                    grabMetaData(function(metadata) {
-                        $.post(baseURL+"/broadcast", JSON.stringify({station: curStation, artist: metadata.artist, song: metadata.song, album: metadata.album}), function(data) {
-                            console.log("Meta data sent!");
-                            console.log(metadata);
+                    //much hack, wait 2 seconds
+                    setTimeout(function() {
+                        grabMetaData(function(metadata) {
+                            $.post(baseURL+"/broadcast/meta", JSON.stringify({station: curStation, artist: metadata.artist, song: metadata.song, album: metadata.album}), function(data) {
+                                console.log("Meta data sent!");
+                                console.log(metadata);
+                            });
                         });
-                    })
+                    }, 2000);
                 });
             }
         });
