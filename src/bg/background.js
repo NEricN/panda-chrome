@@ -224,7 +224,7 @@ chrome.webRequest.onHeadersReceived.addListener(function(data) {
             }
         });
     }
-}, {urls: ["http://*.pandora.com/*"]}, ["responseHeaders"]);
+}, {urls: ["http://*.pandora.com/*", "http://*.p-cdn.com/*"]}, ["responseHeaders"]);
 
 chrome.storage.local.get(['volume','state','tune','broadcast'], function(data) {
     audioManager.changeVolume(data.volum||1*100);

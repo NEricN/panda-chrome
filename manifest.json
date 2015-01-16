@@ -25,7 +25,8 @@
     "tabs",
     "storage",
     "webRequest",
-    "*://*.pandora.com/*"
+    "*://*.pandora.com/*",
+    "*://*.p-cdn.com/*"
   ],
   "content_scripts": [
     {
