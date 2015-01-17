@@ -154,6 +154,8 @@ var tuneInto = function(station, cb) {
 
             var song, album, artist;
 
+            data = JSON.parse(data);
+
             if(data.songData) {
                 song = data.songData.songTitle;
                 album = data.songData.albumTitle;
