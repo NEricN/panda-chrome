@@ -29,10 +29,10 @@ $(document).ready(function() {
         $button.html(text);
     }
 
-    var updateMetaData = function(n_song, n_album, n_title) {
+    var updateMetaData = function(n_song, n_album, n_artist) {
         song = n_song;
         album = n_album;
-        title = n_title;
+        artist = n_artist;
 
         changeNotification("listen");
     }
@@ -57,19 +57,25 @@ $(document).ready(function() {
         if($tunefield.val()) {
             $tunebutton.attr("disabled", true);
             $tunebutton.html(state === "listen" ? "Tuning out..." : "Tuning in...");
-            chrome.runtime.sendMessage({method: state === "listen" ? "off" : 'tune', target: 'background', station: $tunefield.val()}, function(err) {
+            chrome.runtime.sendMessage({method: state === "listen" ? "off" : 'tune', target: 'background', station: $tunefield.val()}, function(err, data) {
                 $tunebutton.attr("disabled", false);
                 if(err) {
                     $tunebutton.attr("disabled", false);
                     $tunebutton.html("Tune in");
                     changeNotification("dead", err);
                 } else {
+
                     if(state === "listen") {
                         enableButton($tunefield, $tunebutton, "button_tune", "Tune in");
                         changeNotification("dead");
                         state = "dead";
                     } else {
                         disableButton($tunefield, $tunebutton, "button_dead", "Tune out");
+
+                        song = data.song;
+                        artist = data.artist;
+
+
                         changeNotification("listen", "", $tunefield.val());
 
                         if(state === "broadcast") {
@@ -144,7 +150,7 @@ $(document).ready(function() {
         if(req.target === "popup") {
             switch(req.method) {
                 case "unlisten" : changeVolume(req.volume); sendResponse(""); break;
-                case "metadata": updateMetaData(req.song, req.album, req.title); sendResponse(""); break;
+                case "metadata": updateMetaData(req.song, req.album, req.artist); sendResponse(""); break;
             }
         }
         return true;
