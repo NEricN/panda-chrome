@@ -38,6 +38,7 @@ $(document).ready(function() {
     }
 
     var changeNotification = function(state, message, station) {
+        console.log(state);
         var defaultMessage = "";
         if(state === "listen") {
             $notification.attr("class", "streaming");
@@ -50,6 +51,8 @@ $(document).ready(function() {
             defaultMessage = "No Station"; 
         }
 
+        console.log(message||defaultMessage);
+
         $("#marquee").html((message||defaultMessage));
     }
 
@@ -57,9 +60,9 @@ $(document).ready(function() {
         if($tunefield.val()) {
             $tunebutton.attr("disabled", true);
             $tunebutton.html(state === "listen" ? "Tuning out..." : "Tuning in...");
-            chrome.runtime.sendMessage({method: state === "listen" ? "off" : 'tune', target: 'background', station: $tunefield.val()}, function(err, data) {
+            chrome.runtime.sendMessage({method: state === "listen" ? "off" : 'tune', target: 'background', station: $tunefield.val()}, function(err) {
                 $tunebutton.attr("disabled", false);
-                if(err) {
+                if(err && !err.artist) {
                     $tunebutton.attr("disabled", false);
                     $tunebutton.html("Tune in");
                     changeNotification("dead", err);
@@ -70,11 +73,11 @@ $(document).ready(function() {
                         changeNotification("dead");
                         state = "dead";
                     } else {
+                        console.log("tuning in");
                         disableButton($tunefield, $tunebutton, "button_dead", "Tune out");
-
-                        song = data.song;
-                        artist = data.artist;
-
+                        song = err.song;
+                        artist = err.artist;
+                        album = err.album;
 
                         changeNotification("listen", "", $tunefield.val());
 
