@@ -246,8 +246,7 @@
 
         if(tab) {
             executeScripts(tab.id, [
-                { file: "/js/jquery/jquery.min.js"},
-                { file: "/js/content.js"}
+                { file: "/js/content.min.js"}
             ]);
         }
     });
