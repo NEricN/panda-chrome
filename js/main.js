@@ -62,10 +62,10 @@ $(document).ready(function() {
             $tunebutton.html(state === "listen" ? "Tuning out..." : "Tuning in...");
             chrome.runtime.sendMessage({method: state === "listen" ? "off" : 'tune', target: 'background', station: $tunefield.val()}, function(err) {
                 $tunebutton.attr("disabled", false);
-                if(err && !err.artist) {
+                if(err && err.error) {
                     $tunebutton.attr("disabled", false);
                     $tunebutton.html("Tune in");
-                    changeNotification("dead", err);
+                    changeNotification("dead", err.error);
                 } else {
 
                     if(state === "listen") {
@@ -75,9 +75,12 @@ $(document).ready(function() {
                     } else {
                         console.log("tuning in");
                         disableButton($tunefield, $tunebutton, "button_dead", "Tune out");
-                        song = err.song;
-                        artist = err.artist;
-                        album = err.album;
+
+                        if(err.song && err.artist && err.album) {
+                            song = err.song;
+                            artist = err.artist;
+                            album = err.album;
+                        }
 
                         changeNotification("listen", "", $tunefield.val());
 
