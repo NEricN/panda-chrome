@@ -76,7 +76,7 @@ $(document).ready(function() {
                         console.log("tuning in");
                         disableButton($tunefield, $tunebutton, "button_dead", "Tune out");
 
-                        if(err.song && err.artist && err.album) {
+                        if(err && err.song && err.artist && err.album) {
                             song = err.song;
                             artist = err.artist;
                             album = err.album;
